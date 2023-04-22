@@ -4,6 +4,7 @@ class Edge extends fabric.Line {
   constructor(points, options) {
     super(points, options);
     this.numLanes = options.numLanes || 1;
+    this.lanes = [];
   }
 
   _render(ctx) {

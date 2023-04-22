@@ -1,7 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { fabric } from 'fabric';
-import Edge from './helper_classes/Edge';
-import Junction from './helper_classes/Junction';
 import { handleDrawing } from './buttons_hendlers/Drawing';
 import './Canvas.css'
 
@@ -22,6 +20,10 @@ function FabricCanvas() {
       width: window.innerWidth,
     });
 
+    canvasObjects.forEach((obj) => {
+      fabricCanvas.add(obj);
+    });
+
     if (isDrawing) {
       handleDrawing(fabricCanvas, canvasObjects, setCanvasObjects, isDoubleSided);
     } else if (isSelecting) {
@@ -32,7 +34,7 @@ function FabricCanvas() {
       fabricCanvas.dispose();
     };
 
-  }, [isDrawing, isSelecting]);
+  }, [isDrawing, isSelecting, isDoubleSided, canvasObjects]);
 
   const handleDrawButtonClick = (event) => {
     event.preventDefault();
