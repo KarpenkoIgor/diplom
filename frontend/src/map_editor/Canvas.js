@@ -1,7 +1,9 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { fabric } from 'fabric';
 import { handleDrawing } from './buttons_hendlers/Drawing';
-import './Canvas.css'
+import { handleSelecting } from './buttons_hendlers/Selecting';
+import ObjectForm from './buttons_hendlers/ObjectForm';
+import './Canvas.css';
 
 function FabricCanvas() {
   const canvasRef = useRef(null);
@@ -40,7 +42,7 @@ function FabricCanvas() {
     if (isDrawing) {
       handleDrawing(fabricCanvas, canvasObjects, setCanvasObjects, isDoubleSided);
     } else if (isSelecting) {
-
+      handleSelecting(fabricCanvas, selectedObject, setSelectedObject);
     }
 
     fabricCanvas.on('mouse:wheel', (opt) => {
@@ -64,13 +66,13 @@ function FabricCanvas() {
 
   const handleDrawButtonClick = (event) => {
     event.preventDefault();
-    setIsSelecting(false);
+    setAllFalse();
     setIsDrawing(true);
   };
 
   const handleSelectButtonClick = (event) => {
     event.preventDefault();
-    setIsDrawing(false);
+    setAllFalse();
     setIsSelecting(true);
   };
 
@@ -85,8 +87,16 @@ function FabricCanvas() {
   return (
     <div id="map-editor-container">
       <div>
-        <button onClick={handleDrawButtonClick}>Рисовать линию</button>
+        <button>Загрузить</button>
+        <button>Сохранить</button>
+        <button>Шаг назад</button>
+        <button>Шаг вперед</button>
         <button onClick={handleSelectButtonClick}>Выбрать элемент</button>
+        <button>Удалить</button>
+        <button>Изменить</button>
+        <button onClick={handleDrawButtonClick}>Рисовать линию</button>
+        <button>Настройка соединений</button>
+        <button>Настройка светофоров</button>
         {isDrawing && (
           <div>
             <label>
@@ -101,7 +111,7 @@ function FabricCanvas() {
         )}
       </div>
       <div id="drawing-field">
-        <textarea type="text" value={selectedObject ? selectedObject.toString() : ""} onChange={handleInputChange} />
+        <ObjectForm selectedObject={selectedObject} />
         <canvas ref={canvasRef} />
       </div>
     </div>
