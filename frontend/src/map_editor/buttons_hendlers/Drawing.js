@@ -6,7 +6,6 @@ import Junction from '../helper_classes/Junction';
 const circleR = 7;
 const lineWidth = 8;
 
-
 function rotateLine(cx, cy, ax, ay, R2) {
 
   const r1 = Math.sqrt((ax - cx) ** 2 + (ay - cy) ** 2);
@@ -23,7 +22,7 @@ function rotateLine(cx, cy, ax, ay, R2) {
 }
 
 
-export function handleDrawing(fabricCanvas, canvasObjects, setCanvasObjects, isDoubleSided) {
+export function handleDrawing(fabricCanvas, canvasObjects, setCanvasObjects, realObjects, setRealObjects, isDoubleSided) {
   var line, backline, circle1, circle2;
   function handleMouseDown(options) {
     var pointer = fabricCanvas.getPointer(options.e);
@@ -43,24 +42,25 @@ export function handleDrawing(fabricCanvas, canvasObjects, setCanvasObjects, isD
       });
     }  
     
-    line = new fabric.Line([circle1.left+circleR, circle1.top+circleR, pointer.x, pointer.y], {
+    line = new Edge([circle1.left+circleR, circle1.top+circleR, pointer.x, pointer.y], {
       strokeWidth: lineWidth,
       stroke: 'black',
       selectable: false,
     });
     if(isDoubleSided) {
-      backline = new fabric.Line([pointer.x, pointer.y, circle1.left+circleR, circle1.top+circleR ], {
+      backline = new Edge([pointer.x, pointer.y, circle1.left+circleR, circle1.top+circleR ], {
         strokeWidth: lineWidth,
         stroke: 'black',
         selectable: false,
       });
-      fabricCanvas.add(backline);
+      backline.add(fabricCanvas);
+      console.log(backline);
     }
     circle2 = new Junction({
       left: pointer.x-circleR,
       top: pointer.y-circleR,
     });
-    fabricCanvas.add(line);
+    line.add(fabricCanvas);
     fabricCanvas.add(circle1);
     fabricCanvas.add(circle2);
     fabricCanvas.off('mouse:down');
@@ -70,13 +70,11 @@ export function handleDrawing(fabricCanvas, canvasObjects, setCanvasObjects, isD
 
   function handleMouseMove(options) {
     var pointer = fabricCanvas.getPointer(options.e);
-    const [lineX1, lineY1, lineX2, lineY2] = rotateLine(circle1.left + 
-     circleR, circle1.top + circleR, pointer.x, pointer.y, lineWidth/2);
-    line.set({x1: lineX1, y1: lineY1, x2: lineX2, y2: lineY2});
+    line.set(fabricCanvas, [circle1.left + 
+      circleR, circle1.top + circleR, pointer.x, pointer.y]);
     if(isDoubleSided){
-      const [backlineX1, backlineY1, backlineX2, backlineY2] = rotateLine( pointer.x, pointer.y, circle1.left + 
-        circleR, circle1.top + circleR, lineWidth/2);
-       backline.set({x1: backlineX1, y1: backlineY1, x2: backlineX2, y2: backlineY2});
+       backline.set(fabricCanvas, [pointer.x, pointer.y, circle1.left + 
+        circleR, circle1.top + circleR]);
     }
     circle2.set({ left: pointer.x-circleR, top: pointer.y-circleR });
     fabricCanvas.renderAll();
@@ -89,7 +87,7 @@ export function handleDrawing(fabricCanvas, canvasObjects, setCanvasObjects, isD
         if(clickedObject !== circle1){
           const [lineX1, lineY1, lineX2, lineY2] = rotateLine(circle1.left + 
             circleR, circle1.top + circleR, clickedObject.left+ circleR, clickedObject.top+ circleR, lineWidth/2);
-            var newLine = new fabric.Line([lineX1, lineY1, lineX2, lineY2], {
+            var newLine = new Edge([lineX1, lineY1, lineX2, lineY2], {
               strokeWidth: lineWidth,
               stroke: 'black',
               selectable: false,
@@ -100,14 +98,9 @@ export function handleDrawing(fabricCanvas, canvasObjects, setCanvasObjects, isD
                 circleR, clickedObject.top+
                 circleR, circle1.left + 
                 circleR, circle1.top + circleR, lineWidth/2);
-                var newBackLine = new fabric.Line([backlineX1, backlineY1, backlineX2, backlineY2], {
-                  strokeWidth: lineWidth,
-                  stroke: 'black',
-                  selectable: false,
-                  originX: 'left',
-                });
-                fabricCanvas.remove(backline);
-                fabricCanvas.add(newBackLine);
+                var newBackLine = new Edge([backlineX1, backlineY1, backlineX2, backlineY2]);
+                backline.remove(fabricCanvas);
+                newBackLine.add(fabricCanvas);
             }
             var newCircle2 = new Junction({
               left: clickedObject.left,
@@ -118,23 +111,18 @@ export function handleDrawing(fabricCanvas, canvasObjects, setCanvasObjects, isD
     } else {
         const [lineX1, lineY1, lineX2, lineY2] = rotateLine(circle1.left + 
           circleR, circle1.top + circleR, pointer.x, pointer.y, lineWidth/2);
-        var newLine = new fabric.Line([lineX1, lineY1, lineX2, lineY2], {
-            strokeWidth: lineWidth,
-            stroke: 'black',
-            selectable: false,
-            originX: 'left',
-          });
+        var newLine = new Edge([lineX1, lineY1, lineX2, lineY2]);
           if(isDoubleSided){
             const [backlineX1, backlineY1, backlineX2, backlineY2] = rotateLine( pointer.x, pointer.y, circle1.left + 
               circleR, circle1.top + circleR, lineWidth/2);
-              var newBackLine = new fabric.Line([backlineX1, backlineY1, backlineX2, backlineY2], {
+              var newBackLine = new Edge([backlineX1, backlineY1, backlineX2, backlineY2], {
                 strokeWidth: lineWidth,
                 stroke: 'black',
                 selectable: false,
                 originX: 'left',
               });
-            fabricCanvas.remove(backline);
-            fabricCanvas.add(newBackLine);
+              backline.remove(fabricCanvas);
+              newBackLine.add(fabricCanvas);
           }
           var newCircle2 = new Junction({
             left: pointer.x-circleR,
@@ -146,24 +134,24 @@ export function handleDrawing(fabricCanvas, canvasObjects, setCanvasObjects, isD
         top: circle1.top,
       })
 
-
-      fabricCanvas.remove(line);
+      line.remove(fabricCanvas)
       fabricCanvas.remove(circle1);
       fabricCanvas.remove(circle2);
-      fabricCanvas.add(newLine);
+      newLine.add(fabricCanvas);
       fabricCanvas.add(newCircle1);
       fabricCanvas.add(newCircle2);
       if(isDoubleSided){
-        setCanvasObjects([...canvasObjects, newBackLine, newLine, newCircle1, newCircle2]);
+        setRealObjects([...realObjects, newBackLine, newLine, newCircle1, newCircle2]);
       }
       else {
-        setCanvasObjects([...canvasObjects, newLine, newCircle1, newCircle2]);
+        setRealObjects([...realObjects, newLine, newCircle1, newCircle2]);
       }
-
+      setCanvasObjects(fabricCanvas.getObjects());
     fabricCanvas.off('mouse:down');
     fabricCanvas.off('mouse:move');
     fabricCanvas.off('mouse:up');
     fabricCanvas.on('mouse:down', handleMouseDown);
+
   }
 
   fabricCanvas.on('mouse:down', handleMouseDown);

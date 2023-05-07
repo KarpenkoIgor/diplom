@@ -11,6 +11,7 @@ class Junction extends fabric.Circle {
       selectable: false,
       ...options
     });
+    this.name = "Junction";
     this.inEdges = [];
     this.outEdges = [];
   }

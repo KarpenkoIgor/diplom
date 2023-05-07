@@ -14,6 +14,7 @@ function FabricCanvas() {
   const [isSaving, setIsSaving] = useState(false);
   const [selectedObject, setSelectedObject] = useState(null);
   const [canvasObjects, setCanvasObjects] = useState([]);
+  const [realObjects, setRealObjects] = useState([]);
   const [isDoubleSided, setIsDoubleSided] = useState(false);
   const [canvasZoom, setCanvasZoom] = useState(1);
   const [canvasPosition, setCanvasPosition] = useState({ x: 0, y: 0});
@@ -40,7 +41,7 @@ function FabricCanvas() {
     fabricCanvas.relativePan({x: canvasPosition.x ,y: canvasPosition.y});
 
     if (isDrawing) {
-      handleDrawing(fabricCanvas, canvasObjects, setCanvasObjects, isDoubleSided);
+      handleDrawing(fabricCanvas, canvasObjects, setCanvasObjects, realObjects, setRealObjects, isDoubleSided);
     } else if (isSelecting) {
       handleSelecting(fabricCanvas, selectedObject, setSelectedObject);
     }
@@ -62,7 +63,7 @@ function FabricCanvas() {
       fabricCanvas.dispose();
     };
 
-  }, [isDrawing, isSelecting, isDoubleSided, canvasObjects,]);
+  }, [isDrawing, isSelecting, isDoubleSided, canvasObjects, realObjects]);
 
   const handleDrawButtonClick = (event) => {
     event.preventDefault();

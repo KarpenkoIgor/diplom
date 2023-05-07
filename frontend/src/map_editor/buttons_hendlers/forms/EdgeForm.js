@@ -1,11 +1,11 @@
 import React from 'react';
 
-const JunctionForm = ({ junction, onChange }) => {
+const EdgeForm = ({ edge, onChange }) => {
 
   return (
     <div>
       <label htmlFor="name">Название:</label>
-      <input id="name" type="text" value="Название" />
+      <input id="name" type="text" value={edge.name}/>
       <br />
       <label htmlFor="number">Номер:</label>
       <input id="number" type="text" value="Номер"/>
@@ -20,4 +20,4 @@ const JunctionForm = ({ junction, onChange }) => {
   );
 };
 
-export default JunctionForm;
+export default EdgeForm;
