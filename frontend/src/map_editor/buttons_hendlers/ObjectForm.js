@@ -2,11 +2,14 @@ import React from 'react';
 import JunctionForm from './forms/JunctionForm';
 import EdgeForm from './forms/EdgeForm';
 
-const ObjectForm = ({ selectedObject }) => {
+
+const ObjectForm = ({ selectedObject, canvasObjects, setCanvasObjects }) => {
+
     if(!selectedObject){
         return (
             <div>
-        
+              <label htmlFor="name">Выбор элемента</label>
+              <input id="name" type="text" value=""/>
             </div>
           );
     }
@@ -20,7 +23,7 @@ const ObjectForm = ({ selectedObject }) => {
     else if(selectedObject.constructor.name === 'Edge'){
         return (
             <div>
-            <EdgeForm edge={selectedObject} />
+            <EdgeForm edge={selectedObject} canvasObjects={canvasObjects} setCanvasObjects={setCanvasObjects}/>
             </div>
           );
     }
