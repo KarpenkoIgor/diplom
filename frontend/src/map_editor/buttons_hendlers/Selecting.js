@@ -7,7 +7,7 @@ import findEdgeByLane from './functions/FindEdgeByLane';
 export function handleSelecting(fabricCanvas, selectedObject, setSelectedObject, realObjects) {
     function handleMouseDown(options) {
         if (fabricCanvas.findTarget(options.e)) {
-          if(fabricCanvas.findTarget(options.e).realObjectID.split("_")[0] === "Lane"){
+          if(fabricCanvas.findTarget(options.e).realObjectID.split("_")[0] === "Edge"){
             setSelectedObject(findEdgeByLane(fabricCanvas.findTarget(options.e), realObjects));
           }else{
             setSelectedObject(findRealObject(fabricCanvas.findTarget(options.e), realObjects));

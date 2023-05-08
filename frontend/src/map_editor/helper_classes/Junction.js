@@ -19,6 +19,7 @@ class Junction{
         fill: this.fill,
         selectable: false,
         realObjectID: this.id,
+        perPixelTargetFind: true,
       });
       if (canvas) {
         canvas.add(circle);        

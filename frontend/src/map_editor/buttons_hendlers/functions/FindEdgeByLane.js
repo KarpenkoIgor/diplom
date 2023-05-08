@@ -1,12 +1,8 @@
 function findEdgeByLane(lane, realObjects) {
-    const objectId = lane.realObjectID;
+    const objectId = [lane.realObjectID.split("_")[0],lane.realObjectID.split("_")[1]].join("_");
     for (let i = 0; i < realObjects.length; i++) {
-        if(realObjects[i].id.split("_")[0] === "Edge"){
-            for (let j = 0; j < realObjects[i].lanes.length; j++) {
-                if (realObjects[i].lanes[j].id === objectId) {
-                    return realObjects[i];                
-                }
-            }
+        if(realObjects[i].id === objectId){
+            return realObjects[i];            
         }
     }
     return null;

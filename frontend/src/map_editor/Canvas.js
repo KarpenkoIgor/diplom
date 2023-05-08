@@ -112,7 +112,7 @@ function FabricCanvas() {
         )}
       </div>
       <div id="drawing-field">
-        <ObjectForm selectedObject={selectedObject} />
+        <ObjectForm selectedObject={selectedObject} canvasObjects={canvasObjects} setCanvasObjects={setCanvasObjects}/>
         <canvas ref={canvasRef} />
       </div>
     </div>

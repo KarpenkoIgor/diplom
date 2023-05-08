@@ -26,7 +26,6 @@ class Edge {
       x: Coord[2],
       y: Coord[3]
     };
-    this.numLanes = 1;
     this.name = "Edge";
     this.id = [this.name, Edge.nextId].join("_");
     Edge.nextId++;
@@ -35,7 +34,8 @@ class Edge {
   }
 
   add(canvas){
-    for (let i = 0; i < this.numLanes; i++){
+    const size = this.lanes.length + 1;
+    for (let i = 0; i < size; i++){
       const lineCoords = rotateLine(this.startCoord.x, this.startCoord.y, 
         this.endCoord.x, this.endCoord.y, (i+1/2)*this.lineWidth);
       const lane = new Lane([lineCoords[0], lineCoords[1], lineCoords[2], lineCoords[3]], {
@@ -59,8 +59,25 @@ class Edge {
     });
   }
 
-  setNumLane(num){
-    
+  setNumLanes(num, objects, setObjects){
+    if(num > this.numLanes){
+      const bigin = this.numLanes - 1;
+      for (let i = bigin; i < num; i++){
+        const lineCoords = rotateLine(this.startCoord.x, this.startCoord.y, 
+          this.endCoord.x, this.endCoord.y, (i+1/2)*this.lineWidth);
+        const lane = new Lane([lineCoords[0], lineCoords[1], lineCoords[2], lineCoords[3]], {
+          strokeWidth: this.lineWidth,
+          edgeID: this.id,
+          laneNum: i,
+        });
+
+        lane.addToCanvasObjects(objects, setObjects);   
+        this.lanes.push(lane);    
+      }
+    }
+    else if (num < this.numLanes){
+
+    }
   }
   
   remove(canvas) {

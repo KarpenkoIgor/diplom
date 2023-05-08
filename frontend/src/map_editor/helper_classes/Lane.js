@@ -1,7 +1,6 @@
 import { fabric } from "fabric";
 
 class Lane {
-  static nextId = 0;
   constructor(Coord, options) {
     this.startCoord = {
       x: Coord[0],
@@ -13,10 +12,9 @@ class Lane {
     };
     this.name = "Lane";
     this.lineWidth = options.strokeWidth;
-    this.id = [this.name,Lane.nextId].join("_");
-    Lane.nextId++;
     this.laneNum = options.laneNum;
     this.edgeID = options.edgeID;
+    this.id = [this.edgeID,options.laneNum].join("_");
   }
 
   add(canvas){
@@ -26,10 +24,38 @@ class Lane {
       selectable: false,
       originX: 'left',
       realObjectID: this.id,
+      perPixelTargetFind: true,
     });
     if (canvas) {
       canvas.add(line);     
     }
+  }
+
+  addToCanvasObjects(objects, setObjects){
+    const line = new fabric.Line([this.startCoord.x, this.startCoord.y, this.endCoord.x, this.endCoord.y],{
+      strokeWidth: this.lineWidth,
+      stroke: 'black',
+      selectable: false,
+      originX: 'left',
+      realObjectID: this.id,
+      perPixelTargetFind: true,
+    });
+
+    const [thisName, thisId, thisSubId] = this.id.split('_');
+
+    for(let i=0; i<objects.length; i++){
+      const [name, id, subId] = objects[i].realObjectID.split('_');
+      if(name+id===thisName+thisId&&subId===thisSubId-1){
+        const splitIndex = objects.findIndex(obj => obj.realObjectID === objects[i].realObjectID); // Находим индекс объекта с id равным 5
+        const firstHalf = objects.slice(0, splitIndex + 1); // Создаем первую половину массива
+        const secondHalf = objects.slice(splitIndex + 1); 
+        setObjects(...firstHalf, line, ...secondHalf);
+      }
+    }
+  }
+
+  removeFromCanvasObject(objects, setObjects){
+    
   }
 
   set(canvas, coord) {
