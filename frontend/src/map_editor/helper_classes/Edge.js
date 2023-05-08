@@ -1,10 +1,9 @@
-import { fabric } from "fabric";
 import Lane from "./Lane";
 
 
 function rotateLine(cx, cy, ax, ay, R2) {
-
   const r1 = Math.sqrt((ax - cx) ** 2 + (ay - cy) ** 2);
+  if(r1==0) return [cx, cy, ax, ay];
   const ac1 = [ax - cx, ay - cy];
   const bc1 = [-ac1[1], ac1[0]];
   const bc1_norm = [bc1[0] / r1, bc1[1] / r1];
@@ -13,7 +12,6 @@ function rotateLine(cx, cy, ax, ay, R2) {
   const by = cy  + bc1_scaled[1];
   const bx1 = ax + bc1_scaled[0];
   const by1 = ay + bc1_scaled[1];
-
   return [bx, by, bx1, by1];
 }
 
@@ -30,43 +28,46 @@ class Edge {
     };
     this.numLanes = 1;
     this.name = "Edge";
-    this.id = Edge.nextId;
+    this.id = [this.name, Edge.nextId].join("_");
     Edge.nextId++;
     this.lineWidth = 8;
+    this.lanes = [];
   }
 
   add(canvas){
     for (let i = 0; i < this.numLanes; i++){
-      const lane = new fabric.Line([this.startCoord.x, this.startCoord.y, this.endCoord.x, this.endCoord.y], {
+      const lineCoords = rotateLine(this.startCoord.x, this.startCoord.y, 
+        this.endCoord.x, this.endCoord.y, (i+1/2)*this.lineWidth);
+      const lane = new Lane([lineCoords[0], lineCoords[1], lineCoords[2], lineCoords[3]], {
         strokeWidth: this.lineWidth,
-        stroke: 'black',
-        selectable: false,
-        originX: 'left',
         edgeID: this.id,
         laneNum: i,
       });
 
       if (canvas) {
-        canvas.add(lane);
-        
+        lane.add(canvas);   
+        this.lanes.push(lane);    
       }
     }
   }
 
   set(canvas, coord) {
-    canvas.getObjects().forEach(obj => {
-      if (obj.edgeID === this.id) {
-        const lineCoords = rotateLine(coord[0], coord[1], coord[2], coord[3], this.lineWidth/2*(obj.laneNum+1));
-        obj.set({x1: lineCoords[0], y1: lineCoords[1], 
-          x2: lineCoords[2], y2: lineCoords[3]});  
-      }
+    this.lanes.forEach(obj => {
+      const lineCoords = rotateLine(coord[0], coord[1], coord[2], coord[3], this.lineWidth*(obj.laneNum+1/2));
+      obj.set(canvas, [lineCoords[0],  lineCoords[1], 
+       lineCoords[2],lineCoords[3]]);  
     });
+  }
+
+  setNumLane(num){
+    
   }
   
   remove(canvas) {
-    const filteredObjects = canvas.getObjects().filter(obj => obj.edgeID !== this.id);
-    canvas.clear();
-    canvas.add(...filteredObjects);
+    this.lanes.forEach((obj, index) => {
+      obj.remove(canvas); 
+      this.lanes.splice(index, 1); 
+    });
   }
 }
 

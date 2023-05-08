@@ -43,7 +43,7 @@ function FabricCanvas() {
     if (isDrawing) {
       handleDrawing(fabricCanvas, canvasObjects, setCanvasObjects, realObjects, setRealObjects, isDoubleSided);
     } else if (isSelecting) {
-      handleSelecting(fabricCanvas, selectedObject, setSelectedObject);
+      handleSelecting(fabricCanvas, selectedObject, setSelectedObject, realObjects);
     }
 
     fabricCanvas.on('mouse:wheel', (opt) => {

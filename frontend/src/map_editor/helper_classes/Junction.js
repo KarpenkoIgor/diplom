@@ -1,50 +1,44 @@
 import { fabric } from 'fabric';
-import Edge from './Edge';
 
-class Junction extends fabric.Circle {
+class Junction{
+  static nextId = 0;
   constructor(options) {
-    super({
-      radius: 10,
-      fill: 'red',
-      left: options.left,
-      top: options.top,
-      selectable: false,
-      ...options
-    });
     this.name = "Junction";
-    this.inEdges = [];
-    this.outEdges = [];
+    this.left = options.left;
+    this.top = options.top;
+    this.fill = options.fill || 'red';
+    this.id = [this.name, Junction.nextId].join("_");
+    Junction.nextId++;
   }
 
-  addInEdge(edge) {
-    this.inEdges.push(edge);
+  add(canvas){
+      const circle = new fabric.Circle({
+        radius: 10,
+        left: this.left,
+        top: this.top,
+        fill: this.fill,
+        selectable: false,
+        realObjectID: this.id,
+      });
+      if (canvas) {
+        canvas.add(circle);        
+      }
   }
 
-  addOutEdge(edge) {
-    this.outEdges.push(edge);
+  set(canvas, coord) {
+    canvas.getObjects().forEach(obj => {
+      if (obj.realObjectID === this.id) {
+        obj.set({left: coord.left, top: coord.top});  
+      }
+    });
+  }
+  
+  remove(canvas) {
+    const filteredObjects = canvas.getObjects().filter(obj => obj.realObjectID !== this.id);
+    canvas.clear();
+    canvas.add(...filteredObjects);
   }
 
-  removeInEdge(edge) {
-    const index = this.inEdges.indexOf(edge);
-    if (index > -1) {
-      this.inEdges.splice(index, 1);
-    }
-  }
-
-  removeOutEdge(edge) {
-    const index = this.outEdges.indexOf(edge);
-    if (index > -1) {
-      this.outEdges.splice(index, 1);
-    }
-  }
-
-  getInEdges() {
-    return this.inEdges;
-  }
-
-  getOutEdges() {
-    return this.outEdges;
-  }
 }
 
 export default Junction;
