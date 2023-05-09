@@ -22,9 +22,9 @@ const ObjectForm = ({ selectedObject, canvasObjects, setCanvasObjects }) => {
     }
     else if(selectedObject.constructor.name === 'Edge'){
         return (
-            <div>
-            <EdgeForm edge={selectedObject} canvasObjects={canvasObjects} setCanvasObjects={setCanvasObjects}/>
-            </div>
+          <div>
+            <EdgeForm key={selectedObject.id} edge={selectedObject} canvasObjects={canvasObjects} setCanvasObjects={setCanvasObjects}/>
+          </div>
           );
     }
   return (

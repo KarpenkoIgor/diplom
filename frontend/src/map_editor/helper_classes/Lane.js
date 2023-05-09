@@ -42,20 +42,30 @@ class Lane {
     });
 
     const [thisName, thisId, thisSubId] = this.id.split('_');
-
-    for(let i=0; i<objects.length; i++){
+    const size = objects.length;
+    for(let i=0; i<size; i++){
       const [name, id, subId] = objects[i].realObjectID.split('_');
-      if(name+id===thisName+thisId&&subId===thisSubId-1){
-        const splitIndex = objects.findIndex(obj => obj.realObjectID === objects[i].realObjectID); // Находим индекс объекта с id равным 5
-        const firstHalf = objects.slice(0, splitIndex + 1); // Создаем первую половину массива
+      if(name+id==thisName+thisId&&subId==thisSubId-1){
+        const splitIndex = objects.findIndex(obj => obj.realObjectID === objects[i].realObjectID); 
+        const firstHalf = objects.slice(0, splitIndex + 1);
         const secondHalf = objects.slice(splitIndex + 1); 
-        setObjects(...firstHalf, line, ...secondHalf);
+        setObjects([...firstHalf, line, ...secondHalf]);
       }
     }
   }
 
   removeFromCanvasObject(objects, setObjects){
-    
+    const [thisName, thisId, thisSubId] = this.id.split('_');
+    const size = objects.length;
+    for(let i=0; i<size; i++){
+      const [name, id, subId] = objects[i].realObjectID.split('_');
+      if(name+id==thisName+thisId&&subId==thisSubId){
+        const splitIndex = objects.findIndex(obj => obj.realObjectID === objects[i].realObjectID); 
+        const firstHalf = objects.slice(0, splitIndex);
+        const secondHalf = objects.slice(splitIndex + 1); 
+        setObjects([...firstHalf, ...secondHalf]);
+      }
+    }
   }
 
   set(canvas, coord) {

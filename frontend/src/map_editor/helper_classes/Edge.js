@@ -60,8 +60,8 @@ class Edge {
   }
 
   setNumLanes(num, objects, setObjects){
-    if(num > this.numLanes){
-      const bigin = this.numLanes - 1;
+    if(num > this.lanes.length){
+      const bigin = this.lanes.length;
       for (let i = bigin; i < num; i++){
         const lineCoords = rotateLine(this.startCoord.x, this.startCoord.y, 
           this.endCoord.x, this.endCoord.y, (i+1/2)*this.lineWidth);
@@ -70,13 +70,16 @@ class Edge {
           edgeID: this.id,
           laneNum: i,
         });
-
         lane.addToCanvasObjects(objects, setObjects);   
         this.lanes.push(lane);    
       }
     }
-    else if (num < this.numLanes){
-
+    else if (num < this.lanes.length){
+      const end = this.lanes.length;
+      for(let i = end; i > num; i--){
+        this.lanes[i - 1].removeFromCanvasObject(objects, setObjects);
+        this.lanes.pop()
+      }
     }
   }
   

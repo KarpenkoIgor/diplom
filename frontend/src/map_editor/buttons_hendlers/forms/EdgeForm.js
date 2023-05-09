@@ -2,20 +2,21 @@ import React, { useState } from 'react';
 
 const EdgeForm = ({ edge, canvasObjects, setCanvasObjects }) => {
   const [numLanes, setNumLanes] = useState(edge.lanes.length);
+  console.log(canvasObjects);
 
   const handleNumLanesChange = (event) => {
-    setNumLanes(event.target.value);
-    console.log(canvasObjects);
-    edge.setNumLanes(event.target.value,canvasObjects, setCanvasObjects);
+    const newNumLanes = event.target.value;
+    setNumLanes(newNumLanes);
+    edge.setNumLanes(newNumLanes, canvasObjects, setCanvasObjects);   
   };
 
   return (
     <div>
       <label htmlFor="name">ID:</label>
-      <input id="name" type="text" value={edge.id} />
+      <input id="name" type="text" readOnly value={edge.id} />
       <br />
       <label htmlFor="number">numLanes:</label>
-      <input id="number" type="number" max="50" min="1" value={numLanes} onChange={handleNumLanesChange} />
+      <input id="number" type="number"  max="50" min="1" value={numLanes} onChange={handleNumLanesChange} />
       <br />
       <label htmlFor="type">Тип:</label>
       <select id="type" value="Тип">
