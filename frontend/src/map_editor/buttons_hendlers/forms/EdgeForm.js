@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 
 const EdgeForm = ({ edge, canvasObjects, setCanvasObjects }) => {
   const [numLanes, setNumLanes] = useState(edge.lanes.length);
-  console.log(canvasObjects);
 
   const handleNumLanesChange = (event) => {
     const newNumLanes = event.target.value;

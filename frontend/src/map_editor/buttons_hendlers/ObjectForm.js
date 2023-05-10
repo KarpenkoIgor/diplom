@@ -16,14 +16,16 @@ const ObjectForm = ({ selectedObject, canvasObjects, setCanvasObjects }) => {
     else if(selectedObject.constructor.name === 'Junction'){
         return (
             <div>                
-            <JunctionForm junction={selectedObject} />
+            <JunctionForm key={selectedObject.id} junction={selectedObject} 
+            canvasObjects={canvasObjects} setCanvasObjects={setCanvasObjects}/>
             </div>
           );
     }
     else if(selectedObject.constructor.name === 'Edge'){
         return (
           <div>
-            <EdgeForm key={selectedObject.id} edge={selectedObject} canvasObjects={canvasObjects} setCanvasObjects={setCanvasObjects}/>
+            <EdgeForm key={selectedObject.id} edge={selectedObject} 
+            canvasObjects={canvasObjects} setCanvasObjects={setCanvasObjects}/>
           </div>
           );
     }

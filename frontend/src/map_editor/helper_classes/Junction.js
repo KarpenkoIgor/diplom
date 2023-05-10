@@ -9,6 +9,8 @@ class Junction{
     this.fill = options.fill || 'red';
     this.id = [this.name, Junction.nextId].join("_");
     Junction.nextId++;
+    this.inEdge = [];
+    this.outEdge = [];
   }
 
   add(canvas){
@@ -30,6 +32,8 @@ class Junction{
     canvas.getObjects().forEach(obj => {
       if (obj.realObjectID === this.id) {
         obj.set({left: coord.left, top: coord.top});  
+        this.left = coord.left;
+        this.top = coord.top;
       }
     });
   }
@@ -38,6 +42,23 @@ class Junction{
     const filteredObjects = canvas.getObjects().filter(obj => obj.realObjectID !== this.id);
     canvas.clear();
     canvas.add(...filteredObjects);
+  }
+
+  addInEdge(edge) {
+    this.inEdge.push(edge);
+  }
+
+  addOutEdge(edge){
+    this.outEdge.push(edge);
+  }
+  
+  setFill(canvas, color){
+    this.fill = color;
+    canvas.getObjects().forEach(obj => {
+      if (obj.realObjectID === this.id) {
+        obj.set({fill: this.fill});  
+      }
+    });
   }
 
 }

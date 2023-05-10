@@ -52,6 +52,14 @@ class Edge {
   }
 
   set(canvas, coord) {
+    this.startCoord = {
+      x: coord[0],
+      y: coord[1]
+    };
+    this.endCoord = {
+      x: coord[2],
+      y: coord[3]
+    };
     this.lanes.forEach(obj => {
       const lineCoords = rotateLine(coord[0], coord[1], coord[2], coord[3], this.lineWidth*(obj.laneNum+1/2));
       obj.set(canvas, [lineCoords[0],  lineCoords[1], 

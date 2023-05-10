@@ -1,5 +1,7 @@
 import Edge from '../helper_classes/Edge';
 import Junction from '../helper_classes/Junction';
+import findRealObject from './functions/FindRealObject';
+import findCanvasObject from './functions/FindCanvasObject';
 
 
 const circleR = 7;
@@ -7,15 +9,13 @@ const circleR = 7;
 
 export function handleDrawing(fabricCanvas, canvasObjects, setCanvasObjects, realObjects, setRealObjects, isDoubleSided) {
   var line, backline, circle1, circle2;
+  const newRealObjects = [];
   function handleMouseDown(options) {
     const pointer = fabricCanvas.getPointer(options.e);
     const clickedObject = fabricCanvas.findTarget(options.e);
     if (clickedObject && clickedObject.realObjectID.split("_")[0] === 'Junction') {
-      circle1 = new Junction({
-        left: clickedObject.left,
-        top: clickedObject.top,
-        fill: '#2bff00',
-      });
+      circle1 = findRealObject(clickedObject, realObjects);
+      circle1.setFill(fabricCanvas, "#2bff00");
       fabricCanvas.remove(clickedObject);
     } else {
       circle1 = new Junction({
@@ -23,6 +23,7 @@ export function handleDrawing(fabricCanvas, canvasObjects, setCanvasObjects, rea
         top: pointer.y - circleR,
         fill: '#2bff00',
       });
+      newRealObjects.push(circle1);
     }  
     
     line = new Edge([circle1.left+circleR, circle1.top+circleR, pointer.x, pointer.y]);
@@ -59,54 +60,46 @@ export function handleDrawing(fabricCanvas, canvasObjects, setCanvasObjects, rea
     const clickedObject = fabricCanvas.findTarget(options.e);
     if (clickedObject && clickedObject.realObjectID.split("_")[0] === 'Junction') {
         if(clickedObject !== circle1){
-            var newLine = new Edge([circle1.left + 
+            line.set(fabricCanvas, [circle1.left + 
               circleR, circle1.top + circleR, clickedObject.left+ circleR, clickedObject.top+ circleR]);
+            newRealObjects.push(line);
             if(isDoubleSided){
-                var newBackLine = new Edge([clickedObject.left+ 
-                  circleR, clickedObject.top+
-                  circleR, circle1.left + 
-                  circleR, circle1.top + circleR]);
-                backline.remove(fabricCanvas);
-                newBackLine.add(fabricCanvas);
+              backline.set(fabricCanvas, [clickedObject.left+ 
+                circleR, clickedObject.top+
+                circleR, circle1.left + 
+                circleR, circle1.top + circleR]);
+                newRealObjects.push(backline);
             }
-            var newCircle2 = new Junction({
-              left: clickedObject.left,
-              top: clickedObject.top,
-            });
+            circle2.remove(fabricCanvas);
+            circle2 = findRealObject(clickedObject, realObjects);
             fabricCanvas.remove(clickedObject);
+            circle2.add(fabricCanvas);
         }
     } else {
-        var newLine = new Edge([circle1.left + 
+        line.set(fabricCanvas, [circle1.left + 
           circleR, circle1.top + circleR, pointer.x, pointer.y]);
+          newRealObjects.push(line);
           if(isDoubleSided){
-              var newBackLine = new Edge([pointer.x, pointer.y, circle1.left + 
+              backline.set(fabricCanvas, [pointer.x, pointer.y, circle1.left + 
                 circleR, circle1.top + circleR]);
-              backline.remove(fabricCanvas);
-              newBackLine.add(fabricCanvas);
+              newRealObjects.push(backline);
           }
-          var newCircle2 = new Junction({
+          circle2.set(fabricCanvas, {
             left: pointer.x-circleR,
             top: pointer.y-circleR,
           })
+          newRealObjects.push(circle2);
     }
-      var newCircle1 = new Junction({
-        left: circle1.left,
-        top: circle1.top,
-      })
 
-      line.remove(fabricCanvas)
-      circle1.remove(fabricCanvas);
-      circle2.remove(fabricCanvas);
-      newLine.add(fabricCanvas);
-      newCircle1.add(fabricCanvas);
-      newCircle2.add(fabricCanvas);
-      if(isDoubleSided){
-        setRealObjects([...realObjects, newBackLine, newLine, newCircle1, newCircle2]);
-      }
-      else {
-        setRealObjects([...realObjects, newLine, newCircle1, newCircle2]);
-      }
-      setCanvasObjects(fabricCanvas.getObjects());
+    circle1.setFill(fabricCanvas, 'red');
+    circle1.addOutEdge(line);
+    circle2.addInEdge(line);
+    if(isDoubleSided){
+      circle1.addInEdge(backline);
+      circle2.addOutEdge(backline);
+    }
+    setRealObjects([...realObjects, ...newRealObjects]);
+    setCanvasObjects(fabricCanvas.getObjects());
     fabricCanvas.off('mouse:down');
     fabricCanvas.off('mouse:move');
     fabricCanvas.off('mouse:up');
