@@ -7,6 +7,7 @@ class Junction{
     this.left = options.left;
     this.top = options.top;
     this.fill = options.fill || 'red';
+    this.radius = options.radius || 10;
     this.id = [this.name, Junction.nextId].join("_");
     Junction.nextId++;
     this.inEdge = [];
@@ -15,7 +16,7 @@ class Junction{
 
   add(canvas){
       const circle = new fabric.Circle({
-        radius: 10,
+        radius: this.radius,
         left: this.left,
         top: this.top,
         fill: this.fill,
@@ -36,6 +37,40 @@ class Junction{
         this.top = coord.top;
       }
     });
+  }
+
+  setTop(top, objects, setObjects){
+    this.top = top;
+    const size = objects.length;
+    for(let i=0; i<size; i++){
+      if(this.id==objects[i].realObjectID){
+        objects[i].set({top: this.top,});
+      }
+    }
+    this.inEdge.forEach(obj => {
+      obj.setCoord([obj.startCoord.x, obj.startCoord.y, this.left+7, this.top+7],objects, setObjects);
+    })
+    this.outEdge.forEach(obj => {
+      obj.setCoord([this.left+7, this.top+7, obj.endCoord.x, obj.endCoord.y],objects, setObjects);
+    })
+    setObjects([...objects]);
+  }
+
+  setLeft(left, objects, setObjects){
+    this.left = left;
+    const size = objects.length;
+    for(let i=0; i<size; i++){
+      if(this.id==objects[i].realObjectID){
+        objects[i].set({left: this.left,});
+      }
+    }
+    this.inEdge.forEach(obj => {
+      obj.setCoord([obj.startCoord.x, obj.startCoord.y, this.left+7, this.top+7],objects, setObjects);
+    })
+    this.outEdge.forEach(obj => {
+      obj.setCoord([this.left+7, this.top+7, obj.endCoord.x, obj.endCoord.y],objects, setObjects);
+    })
+    setObjects([...objects]);
   }
   
   remove(canvas) {

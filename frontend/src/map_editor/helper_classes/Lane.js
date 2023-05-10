@@ -69,12 +69,33 @@ class Lane {
   }
 
   set(canvas, coord) {
+    this.startCoord = {
+      x: coord[0],
+      y: coord[1]
+    };
+    this.endCoord = {
+      x: coord[2],
+      y: coord[3]
+    };
     canvas.getObjects().forEach(obj => {
       if (obj.realObjectID === this.id) {
         obj.set({x1: coord[0], y1: coord[1], 
           x2: coord[2], y2: coord[3]});  
       }
     });
+  }
+
+  setCoord(coord, objects, setObjects){
+    const [thisName, thisId, thisSubId] = this.id.split('_');
+    const size = objects.length;
+    for(let i=0; i<size; i++){
+      const [name, id, subId] = objects[i].realObjectID.split('_');
+      if(name+id==thisName+thisId&&subId==thisSubId){
+        objects[i].set({x1: coord[0], y1: coord[1], 
+          x2: coord[2], y2: coord[3]});
+      }
+    }
+    setObjects([...objects]);
   }
 
   remove(canvas) {

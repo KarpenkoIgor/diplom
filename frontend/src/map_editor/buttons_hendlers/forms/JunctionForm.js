@@ -6,12 +6,26 @@ const JunctionForm = ({ junction, canvasObjects, setCanvasObjects}) => {
 
   const handlePosXChange = (event) => {
     const newValue = parseFloat(event.target.value);
-    setPosX(newValue.toFixed(2));
+    if(newValue) {
+      setPosX(newValue);
+      junction.setLeft(newValue,canvasObjects,setCanvasObjects);
+    }
+    else {
+      setPosX(0.0);
+      junction.setLeft(0.0,canvasObjects,setCanvasObjects);
+    }
   };
 
   const handlePosYChange = (event) => {
     const newValue = parseFloat(event.target.value);
-    setPosY(newValue.toFixed(2));
+    if(newValue) {
+      setPosY(newValue);
+      junction.setTop(newValue,canvasObjects,setCanvasObjects);
+    }
+    else {
+      setPosY(0.0);
+      junction.setTop(0.0,canvasObjects,setCanvasObjects);
+    }
   };
 
   return (
