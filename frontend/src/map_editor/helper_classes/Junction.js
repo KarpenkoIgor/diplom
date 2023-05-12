@@ -12,6 +12,9 @@ class Junction{
     Junction.nextId++;
     this.inEdge = [];
     this.outEdge = [];
+    this.intEdge = [];
+    this.type = options.type || "dead_end";
+    this.requests = [];
   }
 
   add(canvas){
